@@ -4,7 +4,7 @@ import './index.scss';
 import { DosPlayerOptions } from '../node_modules/js-dos/dist/types/src/player';
 
 const JSDOS_OPTIONS: DosPlayerOptions = {
-	style: 'none',
+	style: 'hidden',
 };
 
 const WRAPPER = document.getElementById('jsdos');
