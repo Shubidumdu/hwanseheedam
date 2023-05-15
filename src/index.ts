@@ -1,11 +1,15 @@
 import './js-dos/js-dos.js';
 import './js-dos/js-dos.css';
 import './index.scss';
-const a = require('./hwanse.jsdos');
+import { DosPlayerOptions } from '../node_modules/js-dos/dist/types/src/player';
 
-console.log(a);
+const JSDOS_OPTIONS: DosPlayerOptions = {
+	style: 'none',
+};
+
+const WRAPPER = document.getElementById('jsdos');
 
 // @ts-ignore
 emulators.pathPrefix = 'js-dos/';
 // @ts-ignore
-Dos(document.getElementById('jsdos')).run(require('./hwanse.jsdos'));
+Dos(WRAPPER, JSDOS_OPTIONS).run(require('./hwanse.jsdos'));
