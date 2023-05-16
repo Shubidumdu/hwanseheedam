@@ -4,8 +4,7 @@ import './index.scss';
 import { DosPlayerOptions } from '../node_modules/js-dos/dist/types/src/player';
 
 const JSDOS_OPTIONS: DosPlayerOptions = {
-	style: 'hidden',
-	preventUnload: true,
+	style: 'none',
 };
 
 const wrapper = document.getElementById('jsdos');
@@ -19,6 +18,7 @@ emulators.pathPrefix = 'js-dos/';
 Dos(wrapper, JSDOS_OPTIONS)
 	.run(gamePath)
 	.then((ci: any) => {
+		document.querySelector('.emulator-options').remove();
 		dosInterface = ci;
 		ci.sendKeyEvent = (key: number, type: boolean) => {
 			ci.addKey(key, type, Date.now() - ci.startedAt);
@@ -32,12 +32,12 @@ const exportSave = async () => {
 	if (dosInterface) {
 		const changesBundle = await dosInterface.persist();
 		await navigator.clipboard.writeText(changesBundle);
-		alert('클립보드에 저장되었습니다.');
+		alert('세이브 데이터가 클립보드에 저장되었습니다.');
 	}
 };
 
 const importSave = async () => {
-	const bufferText = prompt('세이브 텍스트를 입력해주세요.');
+	const bufferText = prompt('세이브 데이터를 입력해주세요.');
 	try {
 		const saveBufferURL = URL.createObjectURL(
 			new Blob([new Uint8Array(JSON.parse(`[${bufferText}]`)).buffer]),
@@ -50,10 +50,3 @@ const importSave = async () => {
 
 document.getElementById('export-save').addEventListener('click', exportSave);
 document.getElementById('import-save').addEventListener('click', importSave);
-
-// ArrowUp = 265;
-// ArrowDown = 264;
-// ArrowLeft = 263;
-// ArrowRight = 262;
-// Enter = 257;
-// Escape = 256;
