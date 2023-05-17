@@ -1,15 +1,17 @@
 import './js-dos/js-dos.js';
 import './js-dos/js-dos.css';
 import './index.scss';
-import { DosPlayerOptions } from '../node_modules/js-dos/dist/types/src/player';
+import {
+	DosPlayer,
+	DosPlayerOptions,
+} from '../node_modules/js-dos/dist/types/src/player';
 
 const JSDOS_OPTIONS: DosPlayerOptions = {
 	style: 'none',
 };
 
 const wrapper = document.getElementById('jsdos');
-// @ts-ignore
-const dosPlayer = Dos(wrapper, JSDOS_OPTIONS);
+const dosPlayer: { value: DosPlayer } = { value: null };
 const gamePath = require('./hwanse.jsdos');
 let dosInterface: any;
 
@@ -18,14 +20,17 @@ emulators.pathPrefix = 'js-dos/';
 
 const runGame = async (saveBufferURL?: string) => {
 	// @ts-ignore
-	dosPlayer.run(gamePath, saveBufferURL).then((ci: any) => {
+	dosPlayer.value = Dos(wrapper, JSDOS_OPTIONS);
+	dosPlayer.value.run(gamePath, saveBufferURL).then((ci: any) => {
 		document.querySelector('.emulator-options').remove();
 		dosInterface = ci;
 		ci.sendKeyEvent = (key: number, type: boolean) => {
 			ci.addKey(key, type, Date.now() - ci.startedAt);
-			requestAnimationFrame(() => {
-				ci.addKey(key, false, Date.now() - ci.startedAt);
-			});
+			if (type) {
+				requestAnimationFrame(() => {
+					ci.addKey(key, false, Date.now() - ci.startedAt);
+				});
+			}
 		};
 	});
 };
@@ -57,7 +62,7 @@ const createSaveButton = () => {
 		style: 'top: 0; right: 0;',
 	});
 	button.addEventListener('click', () => {
-		dosPlayer.layers.save();
+		dosPlayer.value.layers.save();
 	});
 	return button;
 };
