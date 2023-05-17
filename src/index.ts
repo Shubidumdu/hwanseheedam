@@ -1,10 +1,8 @@
 import './js-dos/js-dos.js';
 import './js-dos/js-dos.css';
 import './index.scss';
-import {
-	DosPlayer,
-	DosPlayerOptions,
-} from '../node_modules/js-dos/dist/types/src/player';
+import { DosPlayer, DosPlayerOptions } from './js-dos/types/src/player';
+import { DosInterface } from './types/dos';
 
 const saveSvg = require('./svg/save.svg');
 const exportSvg = require('./svg/export.svg');
@@ -16,45 +14,60 @@ const JSDOS_OPTIONS: DosPlayerOptions = {
 
 const wrapper = document.getElementById('jsdos');
 const dosPlayer: { value: DosPlayer } = { value: null };
+const dosInterface: { value: DosInterface } = { value: null };
 const gamePath = require('./hwanse.jsdos');
-let dosInterface: any;
 
-// @ts-ignore
-emulators.pathPrefix = 'js-dos/';
+window.emulators.pathPrefix = 'js-dos/';
 
 const runGame = async (saveBufferURL?: string) => {
-	// @ts-ignore
-	dosPlayer.value = Dos(wrapper, JSDOS_OPTIONS);
-	dosPlayer.value.run(gamePath, saveBufferURL).then((ci: any) => {
+	dosPlayer.value = window.Dos(wrapper, JSDOS_OPTIONS);
+	dosPlayer.value.run(gamePath, saveBufferURL).then((ci) => {
 		document.querySelector('.emulator-options')?.remove();
-		dosInterface = ci;
+		dosInterface.value = ci as unknown as DosInterface;
 		let timerId: { value: ReturnType<typeof setInterval> } = { value: null };
 		ci.sendKeyEvent = (key: number, type: boolean) => {
 			if (
-				'ontouchstart' in document.documentElement &&
-				// only move keys
-				key >= 262 &&
+				'ontouchstart' in document.documentElement && // in Mobile
+				key >= 262 && // and only move keys
 				key <= 265
 			) {
-				// in Mobile
 				if (type) {
 					if (!timerId.value) {
 						timerId.value = setInterval(() => {
-							ci.addKey(key, true, Date.now() - ci.startedAt);
-							ci.addKey(key, false, Date.now() - ci.startedAt);
+							dosInterface.value.addKey(
+								key,
+								true,
+								Date.now() - dosInterface.value.startedAt,
+							);
+							dosInterface.value.addKey(
+								key,
+								false,
+								Date.now() - dosInterface.value.startedAt,
+							);
 						}, 120);
 					}
 				} else {
-					ci.addKey(key, false, Date.now() - ci.startedAt);
+					dosInterface.value.addKey(
+						key,
+						false,
+						Date.now() - dosInterface.value.startedAt,
+					);
 					clearInterval(timerId.value);
 					timerId.value = null;
 				}
 			} else {
-				// in Desktop
-				ci.addKey(key, type, Date.now() - ci.startedAt);
+				dosInterface.value.addKey(
+					key,
+					type,
+					Date.now() - dosInterface.value.startedAt,
+				);
 				if (type) {
 					requestAnimationFrame(() => {
-						ci.addKey(key, false, Date.now() - ci.startedAt);
+						dosInterface.value.addKey(
+							key,
+							false,
+							Date.now() - dosInterface.value.startedAt,
+						);
 					});
 				}
 			}
@@ -63,8 +76,8 @@ const runGame = async (saveBufferURL?: string) => {
 };
 
 const exportSave = async () => {
-	if (dosInterface) {
-		const changesBundle = await dosInterface.persist();
+	if (dosInterface.value) {
+		const changesBundle = await dosInterface.value.persist();
 		await navigator.clipboard.writeText(changesBundle);
 		alert('세이브 데이터가 클립보드에 저장되었습니다.');
 	}
