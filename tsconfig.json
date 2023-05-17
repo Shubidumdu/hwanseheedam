@@ -4,7 +4,7 @@
 		"noImplicitAny": true,
 		"module": "es6",
 		"target": "ESNext",
-		"allowJs": true,
+		"allowJs": false,
 		"moduleResolution": "nodenext"
 	},
 	"files": ["src/index.ts"],
