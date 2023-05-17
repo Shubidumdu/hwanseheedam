@@ -1,8 +1,8 @@
 import { exportSaveBuffer, importSaveBuffer, saveIndexedDB } from './save';
 
-const saveSvg = require('./svg/save.svg');
-const exportSvg = require('./svg/export.svg');
-const importSvg = require('./svg/import.svg');
+const saveSvg = require('./svgs/save.svg');
+const exportSvg = require('./svgs/export.svg');
+const importSvg = require('./svgs/import.svg');
 
 const createButton = (innerHTML: string) => {
 	const button = document.createElement('button');

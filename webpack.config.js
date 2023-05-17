@@ -21,12 +21,17 @@ const config = {
     plugins: [
         new HtmlWebpackPlugin({
             template: 'index.html',
+            favicon: 'src/favicons/favicon.ico',
         }),
         new CopyPlugin({
             patterns: [
                 {
                     from: "src/js-dos",
                     to: "js-dos",
+                },
+                {
+                    from: "src/favicons",
+                    to: "",
                 }
             ],
             options: {
