@@ -6,6 +6,10 @@ import {
 	DosPlayerOptions,
 } from '../node_modules/js-dos/dist/types/src/player';
 
+const saveSvg = require('./svg/save.svg');
+const exportSvg = require('./svg/export.svg');
+const importSvg = require('./svg/import.svg');
+
 const JSDOS_OPTIONS: DosPlayerOptions = {
 	style: 'none',
 };
@@ -55,12 +59,22 @@ const importSave = async () => {
 	} catch (err) {}
 };
 
-const createSaveButton = () => {
+const createButton = (innerHTML: string) => {
 	const button = document.createElement('button');
 	Object.assign(button, {
-		innerText: '세이브',
-		style: 'top: 0; right: 0;',
+		className: 'emulator-button-touch-zone',
+		innerHTML: `
+			<div class="emulator-button" style="width: 28px; height: 28px;">&nbsp;</div>
+			<div class="emulator-button-text">
+				${innerHTML}
+			</div>
+		`,
 	});
+	return button;
+};
+
+const createSaveButton = () => {
+	const button = createButton(`<img src="${saveSvg}"></svg>`);
 	button.addEventListener('click', () => {
 		dosPlayer.value.layers.save();
 	});
@@ -68,32 +82,38 @@ const createSaveButton = () => {
 };
 
 const createExportSaveButton = () => {
-	const button = document.createElement('button');
-	Object.assign(button, {
-		innerText: '내보내기',
-		style: 'top: 20px; right: 0;',
-	});
+	const button = createButton(`<img src="${exportSvg}"></svg>`);
 	button.addEventListener('click', exportSave);
 	return button;
 };
 
 const createImportSaveButton = () => {
-	const button = document.createElement('button');
-	Object.assign(button, {
-		innerText: '불러오기',
-		style: 'top: 40px; right: 0;',
-	});
+	const button = createButton(`<img src="${importSvg}"></svg>`);
 	button.addEventListener('click', importSave);
 	return button;
 };
 
+const createButtonContainer = () => {
+	const container = document.createElement('div');
+	Object.assign(container.style, {
+		display: 'inline-flex',
+		position: 'absolute',
+		top: '0',
+		right: '0',
+		gap: '12px',
+		padding: '6px',
+	});
+	container.append(
+		createSaveButton(),
+		createExportSaveButton(),
+		createImportSaveButton(),
+	);
+	return container;
+};
+
 runGame();
 
-document.body.append(
-	createSaveButton(),
-	createExportSaveButton(),
-	createImportSaveButton(),
-);
+document.body.append(createButtonContainer());
 
 window.onbeforeunload = function () {
 	return false;
