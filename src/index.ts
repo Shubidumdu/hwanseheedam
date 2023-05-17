@@ -8,16 +8,17 @@ const JSDOS_OPTIONS: DosPlayerOptions = {
 };
 
 const wrapper = document.getElementById('jsdos');
+// @ts-ignore
+const dosPlayer = Dos(wrapper, JSDOS_OPTIONS);
 const gamePath = require('./hwanse.jsdos');
 let dosInterface: any;
 
 // @ts-ignore
 emulators.pathPrefix = 'js-dos/';
 
-// @ts-ignore
-Dos(wrapper, JSDOS_OPTIONS)
-	.run(gamePath)
-	.then((ci: any) => {
+const runGame = async (saveBufferURL?: string) => {
+	// @ts-ignore
+	dosPlayer.run(gamePath, saveBufferURL).then((ci: any) => {
 		document.querySelector('.emulator-options').remove();
 		dosInterface = ci;
 		ci.sendKeyEvent = (key: number, type: boolean) => {
@@ -27,6 +28,7 @@ Dos(wrapper, JSDOS_OPTIONS)
 			});
 		};
 	});
+};
 
 const exportSave = async () => {
 	if (dosInterface) {
@@ -44,9 +46,50 @@ const importSave = async () => {
 		);
 		wrapper.innerHTML = '';
 		// @ts-ignore
-		await Dos(wrapper, JSDOS_OPTIONS).run(gamePath, saveBufferURL);
+		await runGame(saveBufferURL);
 	} catch (err) {}
 };
 
-document.getElementById('export-save').addEventListener('click', exportSave);
-document.getElementById('import-save').addEventListener('click', importSave);
+const createSaveButton = () => {
+	const button = document.createElement('button');
+	Object.assign(button, {
+		innerText: '세이브',
+		style: 'top: 0; right: 0;',
+	});
+	button.addEventListener('click', () => {
+		dosPlayer.layers.save();
+	});
+	return button;
+};
+
+const createExportSaveButton = () => {
+	const button = document.createElement('button');
+	Object.assign(button, {
+		innerText: '내보내기',
+		style: 'top: 20px; right: 0;',
+	});
+	button.addEventListener('click', exportSave);
+	return button;
+};
+
+const createImportSaveButton = () => {
+	const button = document.createElement('button');
+	Object.assign(button, {
+		innerText: '불러오기',
+		style: 'top: 40px; right: 0;',
+	});
+	button.addEventListener('click', importSave);
+	return button;
+};
+
+runGame();
+
+document.body.append(
+	createSaveButton(),
+	createExportSaveButton(),
+	createImportSaveButton(),
+);
+
+window.onbeforeunload = function () {
+	return false;
+};

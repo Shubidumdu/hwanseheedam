@@ -50,13 +50,16 @@ const config = {
                 use: [stylesHandler, 'css-loader', 'sass-loader'],
             },
             {
-                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif|jsdos)$/i,
+                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
                 type: 'asset',
             },
-            // {
-            //     test: /\.jsdos$/i,
-            //     type: 'asset/resource',
-            // },
+            {
+                test: /\.jsdos$/i,
+                type: 'asset',
+                generator: {
+                    filename: '[name][ext]',
+                },
+            },
         ],
     },
     resolve: {
