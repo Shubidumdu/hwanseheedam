@@ -11,8 +11,22 @@ button {
   justify-content: center;
   background-color: transparent;
   border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 32px;
+  height: 32px;
+  padding: 7px;
   border: 2px solid #fff;
   color: #fff;
+}
+
+.button-container {
+  display: inline-flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  gap: 12px;
+  padding: 12px;
+
+  @media (orientation: landscape) {
+    flex-direction: column;
+  }
 }

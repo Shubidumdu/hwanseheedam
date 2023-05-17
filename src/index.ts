@@ -26,14 +26,37 @@ const runGame = async (saveBufferURL?: string) => {
 	// @ts-ignore
 	dosPlayer.value = Dos(wrapper, JSDOS_OPTIONS);
 	dosPlayer.value.run(gamePath, saveBufferURL).then((ci: any) => {
-		document.querySelector('.emulator-options').remove();
+		document.querySelector('.emulator-options')?.remove();
 		dosInterface = ci;
+		let timerId: { value: ReturnType<typeof setInterval> } = { value: null };
 		ci.sendKeyEvent = (key: number, type: boolean) => {
-			ci.addKey(key, type, Date.now() - ci.startedAt);
-			if (type) {
-				requestAnimationFrame(() => {
+			if (
+				'ontouchstart' in document.documentElement &&
+				// only move keys
+				key >= 262 &&
+				key <= 265
+			) {
+				// in Mobile
+				if (type) {
+					if (!timerId.value) {
+						timerId.value = setInterval(() => {
+							ci.addKey(key, true, Date.now() - ci.startedAt);
+							ci.addKey(key, false, Date.now() - ci.startedAt);
+						}, 120);
+					}
+				} else {
 					ci.addKey(key, false, Date.now() - ci.startedAt);
-				});
+					clearInterval(timerId.value);
+					timerId.value = null;
+				}
+			} else {
+				// in Desktop
+				ci.addKey(key, type, Date.now() - ci.startedAt);
+				if (type) {
+					requestAnimationFrame(() => {
+						ci.addKey(key, false, Date.now() - ci.startedAt);
+					});
+				}
 			}
 		};
 	});
@@ -49,22 +72,24 @@ const exportSave = async () => {
 
 const importSave = async () => {
 	const bufferText = prompt('세이브 데이터를 입력해주세요.');
+	if (!bufferText) return;
 	try {
 		const saveBufferURL = URL.createObjectURL(
 			new Blob([new Uint8Array(JSON.parse(`[${bufferText}]`)).buffer]),
 		);
 		wrapper.innerHTML = '';
-		// @ts-ignore
+		dosPlayer.value.stop();
 		await runGame(saveBufferURL);
 	} catch (err) {}
 };
 
 const createButton = (innerHTML: string) => {
 	const button = document.createElement('button');
+
 	Object.assign(button, {
 		className: 'emulator-button-touch-zone',
 		innerHTML: `
-			<div class="emulator-button" style="width: 28px; height: 28px;">&nbsp;</div>
+			<div class="emulator-button" style="width: 24px; height: 24px;"></div>
 			<div class="emulator-button-text">
 				${innerHTML}
 			</div>
@@ -95,14 +120,7 @@ const createImportSaveButton = () => {
 
 const createButtonContainer = () => {
 	const container = document.createElement('div');
-	Object.assign(container.style, {
-		display: 'inline-flex',
-		position: 'absolute',
-		top: '0',
-		right: '0',
-		gap: '12px',
-		padding: '6px',
-	});
+	container.className = 'button-container';
 	container.append(
 		createSaveButton(),
 		createExportSaveButton(),
