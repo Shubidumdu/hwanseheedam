@@ -2,7 +2,7 @@ import { runGame, wrapper } from './game';
 import state from './state';
 
 export const saveIndexedDB = () => {
-	state.dosPlayer?.layers.save();
+	state.dosPlayer.layers.save();
 };
 
 export const exportSaveBuffer = async () => {
