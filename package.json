@@ -4,7 +4,7 @@
 	"description": "play hwanseheedam in web",
 	"main": "index.js",
 	"scripts": {
-		"postinstall": "cp -r ./node_modules/js-dos/dist/* ./src/js-dos",
+		"postinstall": "mkdir -p ./src/js-dos && cp -r ./node_modules/js-dos/dist/* ./src/js-dos",
 		"build": "webpack --mode=production --node-env=production",
 		"build:dev": "webpack --mode=development",
 		"build:prod": "webpack --mode=production --node-env=production",
