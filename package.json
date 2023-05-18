@@ -1,7 +1,7 @@
 {
-	"name": "my-webpack-project",
+	"name": "hwanseheedam",
 	"version": "1.0.0",
-	"description": "My webpack project",
+	"description": "play hwanseheedam in web",
 	"main": "index.js",
 	"scripts": {
 		"postinstall": "cp -r ./node_modules/js-dos/dist/* ./src/js-dos",
@@ -11,8 +11,8 @@
 		"watch": "webpack --watch",
 		"serve": "webpack serve"
 	},
-	"author": "",
-	"license": "ISC",
+	"author": "shubidumdu",
+	"license": "MIT",
 	"dependencies": {
 		"emulators": "^0.73.8",
 		"emulators-ui": "^0.73.9",
