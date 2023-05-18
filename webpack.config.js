@@ -1,8 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -75,12 +75,12 @@ const config = {
 module.exports = () => {
     if (isProduction) {
         config.mode = 'production';
-
         config.plugins.push(new MiniCssExtractPlugin());
-
-
-        config.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
-
+        config.plugins.push(new WorkboxPlugin.GenerateSW({
+            clientsClaim: true,
+            skipWaiting: true,
+            maximumFileSizeToCacheInBytes: 12000000
+        }));
     } else {
         config.mode = 'development';
     }
